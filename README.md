@@ -36,13 +36,24 @@ npm start
 
 ### 方式二：Docker
 ```bash
-# 构建镜像
-docker build -t random-image-bed:latest .
-
-# 运行容器（挂载数据目录以持久化）
+# 直接运行（挂载数据目录以持久化）
 docker run -d --name image-bed -p 3000:3000 \
-  -v ${PWD}/public/uploads:/app/public/uploads \
-  random-image-bed:latest
+  -v ${PWD}/uploads:/app/public/uploads \
+  lun1ry/random-image-bed:latest
+
+# 访问 http://localhost:3000
+```
+
+### 方式三：Docker Compose（推荐）
+```bash
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
 
 # 访问 http://localhost:3000
 ```
@@ -124,9 +135,12 @@ docker run -d --name image-bed -p 3000:3000 \
 .
 ├── server.js              # 后端服务（Express + Multer）
 ├── package.json           # 依赖配置
-├── Dockerfile             # Docker 镜像
-├── .dockerignore          # Docker 忽略文件
+├── docker-compose.yml     # Docker Compose 配置
+├── Dockerfile             # Docker 镜像构建文件
 ├── README.md              # 说明文档
+├── docs/                  # 演示截图
+│   ├── screenshot-1.png
+│   └── screenshot-2.png
 └── public/
     ├── index.html         # 前端页面
     ├── assets/
@@ -135,6 +149,7 @@ docker run -d --name image-bed -p 3000:3000 \
     │   └── js/
     │       └── app.js     # 前端逻辑
     └── uploads/           # 图片存储目录
+        ├── .collections-order.json  # 图床顺序
         ├── 图床1/
         ├── 图床2/
         └── ...
@@ -144,6 +159,14 @@ docker run -d --name image-bed -p 3000:3000 \
 
 ### 环境变量
 - `PORT`：服务端口，默认 3000
+- `NODE_ENV`：Node.js 运行环境，生产环境建议设置为 `production`
+
+### Docker 数据持久化
+Docker Compose 会自动创建 `./uploads` 目录并挂载到容器中，确保图片数据持久化。
+
+**目录映射**：
+- 宿主机：`./uploads` 
+- 容器：`/app/public/uploads`
 
 ### 上传限制
 - 单文件大小：10MB
@@ -191,11 +214,27 @@ docker run -d --name image-bed -p 3000:3000 \
 
 前端 UI 设计与交互借鉴了 [newapi-special-test](https://github.com/CookSleep/newapi-special-test) 项目，感谢原作者的优秀设计！
 
+## 🐳 Docker 镜像
+
+### 镜像信息
+- **镜像名称**：`lun1ry/random-image-bed:latest`
+- **基础镜像**：`node:18-alpine`
+- **镜像大小**：约 150MB
+- **架构支持**：`amd64`, `arm64`
+
+### Docker Hub
+[https://hub.docker.com/r/lun1ry/random-image-bed](https://hub.docker.com/r/lun1ry/random-image-bed)
+
+### 拉取镜像
+```bash
+docker pull lun1ry/random-image-bed:latest
+```
+
 ## 📝 注意事项
 
 - 日志存储在内存中，重启服务器会丢失
 - 图床顺序和折叠状态保存在本地存储（浏览器）
-- 建议生产环境将 `public/uploads` 挂载为持久化卷
+- **重要**：使用 Docker 时请务必挂载 `uploads` 目录以持久化图片数据
 - 自动刷新间隔为10秒，可在 `app.js` 中调整
 - 时间范围默认为24小时
 - 完整支持中文文件名和路径

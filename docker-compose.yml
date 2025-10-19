@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  random-image-bed:
+    image: lun1ry/random-image-bed:latest
+    container_name: random-image-bed
+    ports:
+      - "3000:3000"
+    volumes:
+      # 持久化图片存储目录
+      - ./uploads:/app/public/uploads
+    environment:
+      # 服务端口（可选，默认3000）
+      - PORT=3000
+      # Node.js 环境
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
