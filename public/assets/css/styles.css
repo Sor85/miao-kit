@@ -3,7 +3,7 @@ html, body { height: 100%; overflow-x: hidden; }
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: linear-gradient(135deg, #e6f2ff 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #d9edff 0%, #f0f7ff 50%, #fafbff 100%);
   color: #1f2937;
 }
 
@@ -30,11 +30,14 @@ body {
 .header .subnote { color: #6b7280; font-size: 12px; margin-top: 4px; line-height: 1.4; }
 
 .main-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   padding: 28px 24px 24px;
-  box-shadow: 0 12px 24px rgba(30, 144, 255, 0.12);
-  border: 1px solid #e5f1ff;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #d4e7ff;
 }
 
 .config-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -47,11 +50,14 @@ body {
 
 /* 请求日志主卡片 */
 .log-main-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   padding: 28px 24px 24px;
-  box-shadow: 0 12px 24px rgba(30, 144, 255, 0.12);
-  border: 1px solid #e5f1ff;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #d4e7ff;
 }
 
 .log-main-header {
@@ -135,25 +141,36 @@ body {
   font-weight: 600; 
   font-size: 14px;
   transition: all .2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 .btn:hover { 
   background: #e2e8f0; 
   transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .btn-primary { 
-  background: #1e90ff; 
+  background: linear-gradient(135deg, #1e90ff 0%, #3b9fff 100%);
   color: #fff; 
+  box-shadow: 
+    0 2px 6px rgba(30, 144, 255, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .btn-primary:hover { 
-  background: #1778d6; 
+  background: linear-gradient(135deg, #1778d6 0%, #1e90ff 100%);
+  box-shadow: 
+    0 4px 12px rgba(30, 144, 255, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .btn-secondary { 
-  background: #e7f2ff; 
-  color: #0f172a; 
-  border: 1px solid #cfe6ff; 
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  color: #0369a1; 
+  border: 1px solid #b8d9ff;
+  box-shadow: 0 1px 3px rgba(30, 144, 255, 0.1);
 }
 .btn-secondary:hover { 
-  background: #d9ecff; 
+  background: linear-gradient(135deg, #d0ebff 0%, #e0f2fe 100%);
+  border-color: #93c5fd;
+  box-shadow: 0 2px 6px rgba(30, 144, 255, 0.2);
 }
 
 .muted { color: #64748b; margin: 6px 0 18px; font-size: 14px; }
@@ -197,20 +214,83 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
+  transition: all .3s ease;
+}
+
+.collection-pair.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.collection-pair.drag-over {
+  border: 2px dashed #1e90ff;
+  border-radius: 12px;
+  padding: 4px;
+  margin: -4px -4px;
+  background: rgba(30, 144, 255, 0.05);
+}
+
+/* 拖拽手柄 */
+.drag-handle {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s ease, top 0.2s ease;
+  z-index: 10;
+  padding: 8px 12px;
+}
+
+.drag-handle svg {
+  color: rgba(30, 144, 255, 0.5);
+  transition: color 0.2s ease, transform 0.2s ease;
+  filter: drop-shadow(0 1px 2px rgba(30, 144, 255, 0.15));
+}
+
+.collection-pair:hover .drag-handle {
+  opacity: 1;
+  top: 8px;
+}
+
+.drag-handle:hover svg {
+  color: #1e90ff;
+  filter: drop-shadow(0 2px 4px rgba(30, 144, 255, 0.3));
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle:active svg {
+  transform: scale(0.95);
 }
 
 .upload-collection-card {
-  background: #fbfdff;
-  border: 2px dashed #e5f1ff;
+  background: #ffffff;
+  border: 2px dashed #d4e7ff;
   border-radius: 12px;
   padding: 16px;
   transition: all .2s ease;
 }
 
+.upload-collection-card.dragover {
+  border-color: #1e90ff;
+  background: rgba(30, 144, 255, 0.05);
+  box-shadow: 0 4px 16px rgba(30, 144, 255, 0.2);
+}
+
 .upload-collection-card:hover {
-  border-color: #cfe6ff;
-  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.08);
-  transform: translateY(-1px);
+  border-color: #b8d9ff;
+  box-shadow: 
+    0 6px 16px rgba(30, 144, 255, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .upload-card-header {
@@ -220,6 +300,7 @@ body {
   margin-bottom: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
 }
 
 .upload-collection-name {
@@ -228,12 +309,46 @@ body {
   font-size: 16px;
 }
 
+.upload-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .upload-collection-count {
   font-size: 13px;
-  color: #64748b;
-  background: #f0f9ff;
+  color: #0369a1;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
   padding: 4px 10px;
   border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(30, 144, 255, 0.1);
+}
+
+.toggle-upload-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.toggle-upload-btn:hover {
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.08);
+}
+
+.toggle-upload-btn svg {
+  transition: transform .2s ease;
+}
+
+.upload-collection-card.collapsed .toggle-upload-btn svg {
+  transform: rotate(-90deg);
 }
 
 .upload-dropzone {
@@ -242,11 +357,37 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px 16px;
-  background: #f8fbff;
-  border: 2px dashed #cfe6ff;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fafcff 100%);
+  border: 2px dashed #b8d9ff;
   border-radius: 8px;
-  transition: all .2s ease;
   gap: 8px;
+  max-height: 300px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 3px rgba(30, 144, 255, 0.08);
+}
+
+.upload-collection-card.collapsed .upload-dropzone {
+  max-height: 0;
+  padding: 0 16px;
+  margin: 0;
+  border-width: 0;
+  opacity: 0;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-collection-card.collapsed .upload-card-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .upload-dropzone svg {
@@ -267,15 +408,18 @@ body {
 }
 
 .upload-dropzone:hover {
-  background: #f0f7ff;
-  border-color: #93c5fd;
+  background: linear-gradient(135deg, #e6f2ff 0%, #f0f7ff 100%);
+  border-color: #5eb0ff;
+  box-shadow: inset 0 1px 3px rgba(30, 144, 255, 0.12);
 }
 
 .upload-dropzone.dragover {
-  background: #e0f2fe;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
   border-color: #1e90ff;
   border-style: solid;
-  box-shadow: inset 0 0 20px rgba(30, 144, 255, 0.1);
+  box-shadow: 
+    inset 0 0 20px rgba(30, 144, 255, 0.15),
+    0 0 0 3px rgba(30, 144, 255, 0.1);
 }
 
 .upload-dropzone.dragover svg {
@@ -285,20 +429,25 @@ body {
 
 
 .collection-card {
-  background: #fbfdff;
-  border: 1px solid #e5f1ff;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fafcff 100%);
+  border: 1px solid #d4e7ff;
   border-radius: 12px;
   padding: 16px;
   transition: all .2s ease;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-shadow: 
+    0 2px 8px rgba(30, 144, 255, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .collection-card:hover {
-  background: #f4f9ff;
-  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.08);
-  border-color: #cfe6ff;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #e6f2ff 0%, #f0f7ff 100%);
+  box-shadow: 
+    0 6px 16px rgba(30, 144, 255, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  border-color: #b8d9ff;
+  transform: translateY(-2px);
 }
 
 .collection-header {
@@ -311,6 +460,29 @@ body {
   font-weight: 700;
   color: #0f172a;
   font-size: 16px;
+}
+
+.collection-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.icon-edit-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-edit-btn:hover {
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.08);
 }
 
 .icon-delete-btn {
@@ -337,13 +509,15 @@ body {
 }
 
 .collection-url code {
-  background: #f8fbff;
-  border: 1px solid #e5f1ff;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fafcff 100%);
+  border: 1px solid #d4e7ff;
   border-radius: 6px;
   padding: 4px 8px;
   font-family: ui-monospace, monospace;
-  color: #1e90ff;
+  color: #0369a1;
   font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(30, 144, 255, 0.08);
 }
 
 .collection-actions {
@@ -366,12 +540,14 @@ body {
 
 /* 日志控制卡片容器 */
 .log-control-card {
-  background: #fff;
-  border: 1px solid #e5f1ff;
+  background: #ffffff;
+  border: 1px solid #d4e7ff;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.06);
+  box-shadow: 
+    0 2px 8px rgba(30, 144, 255, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .log-control-header {
@@ -434,12 +610,14 @@ body {
 }
 
 .stat-card {
-  background: linear-gradient(to right, #e0e7ff 0%, #ffffff 100%);
-  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff 0%, #fafcff 100%);
+  border: 1px solid #e0ecf9;
   border-radius: 12px;
   padding: 16px;
   text-align: left;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 
+    0 2px 6px rgba(30, 144, 255, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06);
   transition: all .2s ease;
   position: relative;
   overflow: hidden;
@@ -459,7 +637,9 @@ body {
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.08);
+  box-shadow: 
+    0 6px 16px rgba(30, 144, 255, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .stat-card:hover::before {
@@ -568,8 +748,8 @@ body {
 }
 
 .log-item {
-  background: #fbfdff;
-  border: 1px solid #e5f1ff;
+  background: #ffffff;
+  border: 1px solid #d4e7ff;
   border-radius: 8px;
   padding: 14px 16px;
   cursor: pointer;
@@ -579,6 +759,9 @@ body {
   gap: 12px;
   align-items: center;
   min-height: 50px;
+  box-shadow: 
+    0 1px 3px rgba(30, 144, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 @media (max-width: 900px) {
@@ -595,9 +778,11 @@ body {
 }
 
 .log-item:hover {
-  background: #f8fbff;
-  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.08);
-  border-color: #cfe6ff;
+  background: #fafcff;
+  box-shadow: 
+    0 4px 12px rgba(30, 144, 255, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  border-color: #b8d9ff;
   transform: translateY(-1px);
 }
 
@@ -659,6 +844,24 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.random-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.1);
+  border: 1px solid rgba(30, 144, 255, 0.3);
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .log-status {
@@ -823,6 +1026,57 @@ body {
   gap: 12px;
 }
 
+/* 图片画廊操作按钮区域 */
+.gallery-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 批量选择按钮 - 与删除按钮样式一致 */
+.batch-select-label {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid #cfe6ff;
+  background: #e7f2ff;
+  color: #0f172a;
+  transition: all .2s ease;
+  user-select: none;
+}
+
+.batch-select-label:hover {
+  background: #d9ecff;
+  transform: translateY(-1px);
+}
+
+.batch-select-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.batch-select-label span {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* 批量删除按钮 */
+#batchDeleteBtn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
 /* 
  * 图片数量徽章样式
  * 注意：以下样式经过精心调整以确保圆点和数字完美居中对齐
@@ -960,6 +1214,62 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* 图片项复选框 */
+.gallery-item-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+/* 悬停在图片上时显示复选框 */
+.gallery-item:hover .gallery-item-checkbox {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 已选中的复选框始终显示 */
+.gallery-item-checkbox:checked {
+  opacity: 1;
+  transform: scale(1);
+  background: #1e90ff;
+  border-color: #1e90ff;
+}
+
+.gallery-item-checkbox:hover {
+  background: #ffffff;
+  border-color: #1e90ff;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.2);
+}
+
+.gallery-item-checkbox:checked:hover {
+  background: #1e90ff;
+}
+
+.gallery-item-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .gallery-item-info {
