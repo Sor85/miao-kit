@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>简易图床 · 随机展示</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>简易图床 · 按图床随机展示</h1>
+      <p>上传图片到图床，访问随机 URL 获取任意一张</p>
+      <p class="subnote">所有图片存储在服务器本地，支持图床管理与随机展示</p>
+    </header>
+
+    <main class="main-card">
+      <section class="config-section">
+        <div class="config-header">
+          <h2>上传图片</h2>
+          <button class="btn btn-primary btn-sm" id="btnCreateCollection">创建图床</button>
+        </div>
+        <p class="muted">创建图床后，可以拖拽图片到图床卡片上传，或点击"上传图片"按钮手动选择。</p>
+        
+        <!-- 图床列表（上传+浏览） -->
+        <div id="collectionsContainer" class="collections-container"></div>
+      </section>
+
+      <section class="test-section">
+        <!-- 请求日志独立卡片 -->
+        <div class="log-main-card">
+          <div class="log-main-header">
+            <div>
+              <h2>请求日志</h2>
+              <p class="muted">显示最近的图片上传和随机访问记录，点击查看详情。</p>
+            </div>
+          </div>
+
+          <!-- 统计与筛选卡片 -->
+          <div class="log-control-card">
+          <div class="log-control-header">
+            <h3>图床操作统计</h3>
+            <button class="icon-refresh-btn" id="refreshLogs" title="刷新日志">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 统计信息 -->
+          <div class="log-stats">
+            <div class="stat-card">
+              <div class="stat-label">全部</div>
+              <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">成功</div>
+              <div class="stat-value stat-success" id="statSuccess">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">失败</div>
+              <div class="stat-value stat-error" id="statError">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">错误</div>
+              <div class="stat-value stat-error" id="statErrorCount">0</div>
+            </div>
+          </div>
+
+          <!-- 筛选器 -->
+          <div class="grid-4 log-filters">
+            <div class="input-group">
+              <label for="filterMethod">请求类型</label>
+              <select id="filterMethod">
+                <option value="all">全部</option>
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="filterStatus">请求状态</label>
+              <select id="filterStatus">
+                <option value="all">全部</option>
+                <option value="success">成功</option>
+                <option value="error">失败</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="filterCollection">图床</label>
+              <select id="filterCollection">
+                <option value="all">全部</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="filterTimeRange">时间范围</label>
+              <select id="filterTimeRange">
+                <option value="24">最近24小时</option>
+                <option value="168">最近7天</option>
+                <option value="720">最近30天</option>
+                <option value="all">全部时间</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 日志列表 -->
+        <div id="logList" class="log-list"></div>
+        
+        <!-- 分页器 -->
+        <div class="pagination" id="pagination" style="display:none;">
+          <button class="pagination-btn" id="prevPage" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="pagination-info">
+            <span id="pageInfo">第 1 页 / 共 1 页</span>
+          </div>
+          <button class="pagination-btn" id="nextPage" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+        </div><!-- 结束 log-main-card -->
+      </section>
+    </main>
+  </div>
+
+  <!-- 日志详情模态框 -->
+  <div id="logModal" class="modal">
+    <div class="modal-content log-modal">
+      <div class="modal-header">
+        <h2>请求详情</h2>
+        <span class="close" id="closeLogModal">&times;</span>
+      </div>
+      <div class="log-detail-body">
+        <div class="detail-section">
+          <h3>基本信息</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">请求方法</span>
+              <span class="detail-value" id="detailMethod"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">请求路径</span>
+              <span class="detail-value" id="detailPath"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">状态码</span>
+              <span class="detail-value" id="detailStatus"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">耗时</span>
+              <span class="detail-value" id="detailDuration"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">时间戳</span>
+              <span class="detail-value" id="detailTimestamp"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">响应大小</span>
+              <span class="detail-value" id="detailSize"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>请求信息</h3>
+          <div class="detail-item">
+            <span class="detail-label">IP 地址</span>
+            <span class="detail-value" id="detailIP"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">User Agent</span>
+            <span class="detail-value detail-ua" id="detailUA"></span>
+          </div>
+        </div>
+
+        <div class="detail-section" id="querySection" style="display:none;">
+          <h3>查询参数</h3>
+          <pre class="detail-code" id="detailQuery"></pre>
+        </div>
+
+        <div class="detail-section" id="bodySection" style="display:none;">
+          <h3>请求体</h3>
+          <pre class="detail-code" id="detailBody"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

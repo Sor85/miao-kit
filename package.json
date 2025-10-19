@@ -1,0 +1,25 @@
+{
+  "name": "random-image-bed",
+  "version": "1.0.0",
+  "description": "简单图床：按集合上传、静态访问、随机展示某集合中的图片",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "image",
+    "gallery",
+    "random",
+    "express",
+    "multer",
+    "docker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1"
+  }
+}
+
