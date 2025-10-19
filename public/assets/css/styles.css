@@ -24,10 +24,23 @@ body {
 
 .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
-.header { text-align: center; color: #0f172a; margin-bottom: 32px; }
-.header h1 { font-size: 28px; margin: 8px 0; line-height: 1.2; }
+.header { text-align: left; color: #0f172a; margin-bottom: 32px; }
+.header h1 { font-size: 28px; margin: 8px 0; line-height: 1.2; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .header p { color: #475569; line-height: 1.5; margin: 8px 0; }
 .header .subnote { color: #6b7280; font-size: 12px; margin-top: 4px; line-height: 1.4; }
+
+/* 版本号徽章 */
+.version-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.15);
+}
 
 .main-card {
   background: #ffffff;
@@ -194,7 +207,8 @@ body {
 .collections-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  row-gap: 32px;
+  column-gap: 20px;
   margin-top: 16px;
 }
 

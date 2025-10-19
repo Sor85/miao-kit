@@ -1,7 +1,7 @@
 {
   "name": "random-image-bed",
   "version": "1.0.0",
-  "description": "简单图床：按集合上传、静态访问、随机展示某集合中的图片",
+  "description": "简单图床：按图床上传、静态访问、随机展示某图床中的图片",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
