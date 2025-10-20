@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  random-image-bed:
-    image: lun1ry/random-image-bed:latest
-    container_name: random-image-bed
+  miao-kit:
+    image: lun1ry/miao-kit:latest
+    container_name: miao-kit
     ports:
       - "3000:3000"
     volumes:
