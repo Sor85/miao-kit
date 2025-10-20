@@ -30,9 +30,11 @@
 
 ## 📸 界面预览
 
-### 主界面
+### 简易图床
 ![简易图床](docs/screenshot-1.png)
 ![简易图床](docs/screenshot-2.png)
+
+### API 转发
 ![API 转发](docs/screenshot-3.png)
 
 ## 🏗️ 技术架构
