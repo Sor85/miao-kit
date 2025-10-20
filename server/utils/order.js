@@ -28,9 +28,10 @@ const saveOrder = (orderFile, order) => {
 };
 
 /**
- * @param {string[]} allItems
- * @param {string[]} savedOrder
- * @returns {string[]}
+ * 合并保存的顺序和实际存在的项目
+ * @param {string[]} allItems - 实际存在的所有项目
+ * @param {string[]} savedOrder - 保存的顺序
+ * @returns {string[]} 合并后的顺序
  */
 const mergeOrder = (allItems, savedOrder) => {
   const allSet = new Set(allItems);

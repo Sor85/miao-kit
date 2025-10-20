@@ -9,6 +9,8 @@ services:
     volumes:
       # 持久化图片存储目录
       - ./uploads:/app/public/uploads
+      # 持久化转发规则配置
+      - ./forward-rules.json:/app/forward-rules.json
     environment:
       # 服务端口（可选，默认3000）
       - PORT=3000

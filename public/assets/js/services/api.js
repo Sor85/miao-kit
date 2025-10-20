@@ -171,3 +171,18 @@ export const saveOrder = (order) =>
     body: JSON.stringify({ order })
   });
 
+/** 获取转发日志列表 */
+export const fetchForwardLogs = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const response = await fetch(`/api/forward/logs?${query}`);
+  if (!response.ok) throw new Error('获取转发日志失败');
+  return response.json();
+};
+
+/** 获取转发日志详情 */
+export const fetchForwardLogById = async (id) => {
+  const response = await fetch(`/api/forward/logs/${id}`);
+  if (!response.ok) throw new Error('获取转发日志详情失败');
+  return response.json();
+};
+

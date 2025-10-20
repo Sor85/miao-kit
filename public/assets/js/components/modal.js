@@ -7,6 +7,20 @@ import { escapeHtml, openModal } from '../utils/dom.js';
 
 let modalEl = null;
 
+/**
+ * 通用的模态框清理和关闭逻辑
+ * @param {HTMLElement} el - 模态框元素
+ * @param {Function} callback - 关闭后的回调
+ * @param {Array} cleanupListeners - 需要清理的事件监听器数组 [{element, event, handler}, ...]
+ */
+const closeModal = (el, callback, cleanupListeners = []) => {
+  el.classList.remove('open');
+  cleanupListeners.forEach(({ element, event, handler }) => {
+    element?.removeEventListener(event, handler);
+  });
+  callback?.();
+};
+
 const ensureModal = () => {
   if (modalEl) return modalEl;
   
@@ -66,14 +80,11 @@ export const appAlert = (message, title = '提示') =>
     const okBtn = el.querySelector('#appModalOk');
     
     openModal(el, isFirstTime);
-
-    const cleanup = () => {
-      el.classList.remove('open');
-      okBtn.removeEventListener('click', onOk);
-      el.removeEventListener('click', onBackdrop);
-    };
     
-    const onOk = () => { cleanup(); resolve(true); };
+    const onOk = () => closeModal(el, () => resolve(true), [
+      { element: okBtn, event: 'click', handler: onOk },
+      { element: el, event: 'click', handler: onBackdrop }
+    ]);
     const onBackdrop = (e) => e.target === el && onOk();
     
     okBtn.addEventListener('click', onOk);
@@ -108,21 +119,24 @@ export const appPrompt = (message, title = '输入', placeholder = '') =>
     
     openModal(el, isFirstTime);
     setTimeout(() => input.focus(), 100);
-
-    const cleanup = () => {
-      el.classList.remove('open');
-      [okBtn, cancelBtn].forEach(btn => btn.removeEventListener('click', cleanup));
-      el.removeEventListener('click', onBackdrop);
-      input.removeEventListener('keydown', onKeydown);
-    };
     
-    const onOk = () => { 
+    const onOk = () => {
       const value = input.value.trim();
-      cleanup(); 
-      resolve(value || null); 
+      closeModal(el, () => resolve(value || null), [
+        { element: okBtn, event: 'click', handler: onOk },
+        { element: cancelBtn, event: 'click', handler: onCancel },
+        { element: el, event: 'click', handler: onBackdrop },
+        { element: input, event: 'keydown', handler: onKeydown }
+      ]);
     };
     
-    const onCancel = () => { cleanup(); resolve(null); };
+    const onCancel = () => closeModal(el, () => resolve(null), [
+      { element: okBtn, event: 'click', handler: onOk },
+      { element: cancelBtn, event: 'click', handler: onCancel },
+      { element: el, event: 'click', handler: onBackdrop },
+      { element: input, event: 'keydown', handler: onKeydown }
+    ]);
+    
     const onBackdrop = (e) => e.target === el && onCancel();
     const onKeydown = (e) => {
       if (e.key === 'Enter') onOk();
@@ -160,16 +174,17 @@ export const appConfirm = (message, title = '确认') =>
     const cancelBtn = el.querySelector('#appModalCancel');
     
     openModal(el, isFirstTime);
-
-    const cleanup = () => {
-      el.classList.remove('open');
-      okBtn.removeEventListener('click', onOk);
-      cancelBtn.removeEventListener('click', onCancel);
-      el.removeEventListener('click', onBackdrop);
-    };
     
-    const onOk = () => { cleanup(); resolve(true); };
-    const onCancel = () => { cleanup(); resolve(false); };
+    const onOk = () => closeModal(el, () => resolve(true), [
+      { element: okBtn, event: 'click', handler: onOk },
+      { element: cancelBtn, event: 'click', handler: onCancel },
+      { element: el, event: 'click', handler: onBackdrop }
+    ]);
+    const onCancel = () => closeModal(el, () => resolve(false), [
+      { element: okBtn, event: 'click', handler: onOk },
+      { element: cancelBtn, event: 'click', handler: onCancel },
+      { element: el, event: 'click', handler: onBackdrop }
+    ]);
     const onBackdrop = (e) => e.target === el && onCancel();
     
     okBtn.addEventListener('click', onOk);
@@ -201,30 +216,23 @@ export const appChoice = (message, title = '选择', choices = []) =>
     
     openModal(el, isFirstTime);
     
-    const cleanup = () => {
-      el.classList.remove('open');
-      actionsEl.querySelectorAll('button').forEach(btn => 
-        btn.removeEventListener('click', onClick)
-      );
-      el.removeEventListener('click', onBackdrop);
-    };
-    
+    const buttons = Array.from(actionsEl.querySelectorAll('button'));
     const onClick = (e) => {
       const choiceIndex = parseInt(e.target.getAttribute('data-choice'));
-      cleanup();
-      resolve(choiceIndex);
+      const listeners = buttons.map(btn => ({ element: btn, event: 'click', handler: onClick }));
+      listeners.push({ element: el, event: 'click', handler: onBackdrop });
+      closeModal(el, () => resolve(choiceIndex), listeners);
     };
     
     const onBackdrop = (e) => {
       if (e.target === el) {
-        cleanup();
-        resolve(-1);
+        const listeners = buttons.map(btn => ({ element: btn, event: 'click', handler: onClick }));
+        listeners.push({ element: el, event: 'click', handler: onBackdrop });
+        closeModal(el, () => resolve(-1), listeners);
       }
     };
     
-    actionsEl.querySelectorAll('button').forEach(btn => 
-      btn.addEventListener('click', onClick)
-    );
+    buttons.forEach(btn => btn.addEventListener('click', onClick));
     el.addEventListener('click', onBackdrop);
   });
 

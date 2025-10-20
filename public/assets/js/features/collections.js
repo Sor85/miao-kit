@@ -17,6 +17,7 @@ import { appPrompt, appConfirm } from '../components/modal.js';
 import { showImageGallery } from '../components/gallery.js';
 
 let previousCollectionCount = 0;
+let previousCollectionNames = [];
 
 /**
  * @param {string} collection
@@ -29,63 +30,84 @@ const getInitialCollapseClass = (collection, defaultShouldCollapse) => {
 };
 
 /**
+ * 创建拖拽手柄 SVG
+ */
+const createDragHandle = () => `
+  <div class="drag-handle" title="拖拽移动图床位置">
+    <svg width="32" height="4" viewBox="0 0 32 4" fill="none">
+      <rect width="32" height="4" rx="2" fill="currentColor"/>
+    </svg>
+  </div>
+`;
+
+/**
+ * 创建上传卡片 HTML
+ */
+const createUploadCard = (collection, collapseClass) => `
+  <div class="upload-collection-card${collapseClass}" data-collection="${escapeHtml(collection)}">
+    <div class="upload-card-header">
+      <div class="upload-collection-name">${escapeHtml(collection)}</div>
+      <div class="upload-card-controls">
+        <div class="upload-collection-count" data-collection="${escapeHtml(collection)}">0 张</div>
+        <button class="toggle-upload-btn" title="展开/折叠上传区域">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="upload-dropzone" data-collection="${escapeHtml(collection)}">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+      </svg>
+      <p>拖拽图片到这里</p>
+      <span>或</span>
+      <button class="btn btn-secondary btn-sm upload-select-btn">上传图片</button>
+      <input type="file" class="upload-file-input" accept="image/*" multiple style="display:none;" data-collection="${escapeHtml(collection)}" />
+    </div>
+  </div>
+`;
+
+/**
+ * 创建图床信息卡片 HTML
+ */
+const createInfoCard = (collection) => `
+  <div class="collection-card">
+    <div class="collection-header">
+      <div class="collection-name">${escapeHtml(collection)}</div>
+      <div class="collection-header-actions">
+        <button class="icon-edit-btn" data-edit-collection="${escapeHtml(collection)}" title="重命名图床">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+        <button class="icon-delete-btn" data-delete-collection="${escapeHtml(collection)}" title="删除图床">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="collection-url">随机地址：<code>/${escapeHtml(collection)}</code></div>
+    <div class="collection-actions">
+      <button class="btn btn-secondary btn-sm" data-detail="${escapeHtml(collection)}">查看详情</button>
+      <button class="btn btn-primary btn-sm" data-random="${escapeHtml(collection)}">随机打开</button>
+    </div>
+  </div>
+`;
+
+/**
+ * 创建图床卡片对 HTML
  * @param {string} collection
+ * @param {string} collapseClass
  * @returns {string}
  */
 const createCollectionHTML = (collection, collapseClass) => `
   <div class="collection-pair" data-collection="${escapeHtml(collection)}">
-    <div class="drag-handle" title="拖拽移动图床位置">
-      <svg width="32" height="4" viewBox="0 0 32 4" fill="none">
-        <rect width="32" height="4" rx="2" fill="currentColor"/>
-      </svg>
-    </div>
-    
-    <div class="upload-collection-card${collapseClass}" data-collection="${escapeHtml(collection)}">
-      <div class="upload-card-header">
-        <div class="upload-collection-name">${escapeHtml(collection)}</div>
-        <div class="upload-card-controls">
-          <div class="upload-collection-count" data-collection="${escapeHtml(collection)}">0 张</div>
-          <button class="toggle-upload-btn" title="展开/折叠上传区域">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div class="upload-dropzone" data-collection="${escapeHtml(collection)}">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-        </svg>
-        <p>拖拽图片到这里</p>
-        <span>或</span>
-        <button class="btn btn-secondary btn-sm upload-select-btn">上传图片</button>
-        <input type="file" class="upload-file-input" accept="image/*" multiple style="display:none;" data-collection="${escapeHtml(collection)}" />
-      </div>
-    </div>
-    
-    <div class="collection-card">
-      <div class="collection-header">
-        <div class="collection-name">${escapeHtml(collection)}</div>
-        <div class="collection-header-actions">
-          <button class="icon-edit-btn" data-edit-collection="${escapeHtml(collection)}" title="重命名图床">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-          </button>
-          <button class="icon-delete-btn" data-delete-collection="${escapeHtml(collection)}" title="删除图床">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div class="collection-url">随机地址：<code>/${escapeHtml(collection)}</code></div>
-      <div class="collection-actions">
-        <button class="btn btn-secondary btn-sm" data-detail="${escapeHtml(collection)}">查看详情</button>
-        <button class="btn btn-primary btn-sm" data-random="${escapeHtml(collection)}">随机打开</button>
-      </div>
-    </div>
+    ${createDragHandle()}
+    ${createUploadCard(collection, collapseClass)}
+    ${createInfoCard(collection)}
   </div>
 `;
 
@@ -111,6 +133,7 @@ export const refreshCollections = async (
     if (!data.collections || data.collections.length === 0) {
       container.innerHTML = '<div class="empty-state">暂无图床，请先创建图床</div>';
       previousCollectionCount = 0;
+      previousCollectionNames = [];
       return;
     }
 
@@ -119,17 +142,22 @@ export const refreshCollections = async (
     
     const shouldAnimateCollapse = previousCollectionCount > 0 && previousCollectionCount <= 3 && currentCount > 3;
     const shouldAnimateExpand = previousCollectionCount > 3 && currentCount <= 3;
-
-    // 在过渡动画期间，使用过渡前的默认状态，忽略用户保存的状态
-    const initialCollapseState = shouldAnimateExpand ? true : (shouldAnimateCollapse ? false : null);
     
+    // 识别新添加的图床
+    const newCollections = data.collections.filter(c => !previousCollectionNames.includes(c));
+    const shouldPlayEnterAnimation = newCollections.length > 0 && !shouldAnimateCollapse && !shouldAnimateExpand;
+    
+    // 最佳实践：先按用户保存的状态渲染卡片，只对需要改变状态的卡片执行动画
     container.innerHTML = data.collections
       .map(c => {
-        // 如果有过渡动画，使用过渡前的状态；否则使用正常逻辑
-        const collapseClass = initialCollapseState !== null 
-          ? (initialCollapseState ? ' collapsed' : '')
-          : getInitialCollapseClass(c, defaultShouldCollapse);
-        return createCollectionHTML(c, collapseClass);
+        const collapseClass = getInitialCollapseClass(c, defaultShouldCollapse);
+        // 新卡片渲染时就添加初始状态类，避免闪烁
+        const isNew = shouldPlayEnterAnimation && newCollections.includes(c);
+        const enterClass = isNew ? ' collection-enter-initial' : '';
+        return createCollectionHTML(c, collapseClass).replace(
+          'class="collection-pair"',
+          `class="collection-pair${enterClass}"`
+        );
       })
       .join('');
 
@@ -139,33 +167,118 @@ export const refreshCollections = async (
     bindDragEvents();
     await updateCollectionCounts();
     
-    if (shouldAnimateCollapse) {
+    // 新卡片入场动画：在渲染后立即触发，避免闪烁
+    if (shouldPlayEnterAnimation) {
+      // 确保浏览器已应用初始状态
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          $$('.upload-collection-card').forEach(card => {
-            const collectionName = card.getAttribute('data-collection');
-            const isCurrentlyCollapsed = card.classList.contains('collapsed');
-            
-            if (!isCurrentlyCollapsed) card.classList.add('collapsed');
-            saveCollapseState(collectionName, true);
-          });
-        });
-      });
-    } else if (shouldAnimateExpand) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          $$('.upload-collection-card').forEach(card => {
-            const collectionName = card.getAttribute('data-collection');
-            const isCurrentlyCollapsed = card.classList.contains('collapsed');
-            
-            if (isCurrentlyCollapsed) card.classList.remove('collapsed');
-            saveCollapseState(collectionName, false);
-          });
+        newCollections.forEach(collectionName => {
+          const pair = $(`.collection-pair[data-collection="${collectionName}"]`);
+          if (pair) {
+            // 移除初始状态类，添加动画类，触发过渡
+            pair.classList.remove('collection-enter-initial');
+            pair.classList.add('collection-enter');
+            // 动画完成后移除类名
+            setTimeout(() => {
+              pair.classList.remove('collection-enter');
+            }, 400);
+          }
         });
       });
     }
     
+    // 折叠/展开动画：只对需要改变状态的卡片执行动画，避免抖动
+    if (shouldAnimateCollapse) {
+      const cards = $$('.upload-collection-card');
+      const cardsToAnimate = [];
+      
+      // 识别需要折叠的卡片（当前未折叠的）
+      cards.forEach(card => {
+        if (!card.classList.contains('collapsed')) {
+          cardsToAnimate.push(card);
+        }
+      });
+      
+      if (cardsToAnimate.length > 0) {
+        // 第一步：暂时禁用过渡，强制需要动画的卡片进入展开状态
+        cardsToAnimate.forEach(card => {
+          card.style.transition = 'none';
+          card.classList.remove('collapsed');
+        });
+        
+        // 第二步：触发 reflow
+        cardsToAnimate[0]?.offsetHeight;
+        
+        // 第三步：启用过渡并统一折叠
+        requestAnimationFrame(() => {
+          cardsToAnimate.forEach(card => {
+            card.style.transition = '';
+          });
+          
+          requestAnimationFrame(() => {
+            cardsToAnimate.forEach(card => {
+              const collectionName = card.getAttribute('data-collection');
+              card.classList.add('collapsed');
+              saveCollapseState(collectionName, true);
+            });
+          });
+        });
+      }
+      
+      // 已经折叠的卡片：只更新状态，不触碰 DOM
+      cards.forEach(card => {
+        if (card.classList.contains('collapsed')) {
+          const collectionName = card.getAttribute('data-collection');
+          saveCollapseState(collectionName, true);
+        }
+      });
+    } else if (shouldAnimateExpand) {
+      const cards = $$('.upload-collection-card');
+      const cardsToAnimate = [];
+      
+      // 识别需要展开的卡片（当前已折叠的）
+      cards.forEach(card => {
+        if (card.classList.contains('collapsed')) {
+          cardsToAnimate.push(card);
+        }
+      });
+      
+      if (cardsToAnimate.length > 0) {
+        // 第一步：暂时禁用过渡，强制需要动画的卡片进入折叠状态
+        cardsToAnimate.forEach(card => {
+          card.style.transition = 'none';
+          card.classList.add('collapsed');
+        });
+        
+        // 第二步：触发 reflow
+        cardsToAnimate[0]?.offsetHeight;
+        
+        // 第三步：启用过渡并统一展开
+        requestAnimationFrame(() => {
+          cardsToAnimate.forEach(card => {
+            card.style.transition = '';
+          });
+          
+          requestAnimationFrame(() => {
+            cardsToAnimate.forEach(card => {
+              const collectionName = card.getAttribute('data-collection');
+              card.classList.remove('collapsed');
+              saveCollapseState(collectionName, false);
+            });
+          });
+        });
+      }
+      
+      // 已经展开的卡片：只更新状态，不触碰 DOM
+      cards.forEach(card => {
+        if (!card.classList.contains('collapsed')) {
+          const collectionName = card.getAttribute('data-collection');
+          saveCollapseState(collectionName, false);
+        }
+      });
+    }
+    
     previousCollectionCount = currentCount;
+    previousCollectionNames = [...data.collections];
   } catch(err) {
     console.error(err);
     container.innerHTML = '<div class="empty-state">加载图床失败</div>';
@@ -272,6 +385,58 @@ export const bindToggleEvents = () => {
 
 let draggedElement = null;
 
+/**
+ * 处理拖拽开始
+ */
+const handleDragStart = (pair, e) => {
+  draggedElement = pair;
+  pair.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', pair.innerHTML);
+  e.dataTransfer.setData('application/x-collection-card', 'true');
+};
+
+/**
+ * 处理拖拽结束
+ */
+const handleDragEnd = (pair) => {
+  draggedElement?.classList.remove('dragging');
+  pair.removeAttribute('draggable');
+  $$('.collection-pair').forEach(p => p.classList.remove('drag-over'));
+  draggedElement = null;
+};
+
+/**
+ * 处理拖拽放置
+ */
+const handleDrop = async (pair, e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  pair.classList.remove('drag-over');
+  
+  if (draggedElement && draggedElement !== pair) {
+    const allPairs = $$('.collection-pair');
+    const draggedIndex = allPairs.indexOf(draggedElement);
+    const targetIndex = allPairs.indexOf(pair);
+    
+    if (draggedIndex < targetIndex) {
+      pair.parentNode.insertBefore(draggedElement, pair.nextSibling);
+    } else {
+      pair.parentNode.insertBefore(draggedElement, pair);
+    }
+    
+    const order = $$('.collection-pair').map(p => p.getAttribute('data-collection'));
+    try {
+      await saveOrder(order);
+    } catch(err) {
+      console.error('保存顺序失败:', err);
+    }
+  }
+};
+
+/**
+ * 绑定拖拽事件
+ */
 export const bindDragEvents = () => {
   $$('.collection-pair').forEach(pair => {
     const dragHandle = pair.querySelector('.drag-handle');
@@ -279,20 +444,8 @@ export const bindDragEvents = () => {
     dragHandle.addEventListener('mousedown', () => pair.setAttribute('draggable', 'true'));
     dragHandle.addEventListener('mouseup', () => pair.removeAttribute('draggable'));
     
-    pair.addEventListener('dragstart', (e) => {
-      draggedElement = pair;
-      pair.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/html', pair.innerHTML);
-      e.dataTransfer.setData('application/x-collection-card', 'true'); // 标记为卡片拖拽
-    });
-    
-    pair.addEventListener('dragend', () => {
-      draggedElement?.classList.remove('dragging');
-      pair.removeAttribute('draggable');
-      $$('.collection-pair').forEach(p => p.classList.remove('drag-over'));
-      draggedElement = null;
-    });
+    pair.addEventListener('dragstart', (e) => handleDragStart(pair, e));
+    pair.addEventListener('dragend', () => handleDragEnd(pair));
     
     pair.addEventListener('dragover', (e) => {
       e.preventDefault();
@@ -306,31 +459,7 @@ export const bindDragEvents = () => {
       if (e.target === pair) pair.classList.remove('drag-over');
     });
     
-    pair.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      pair.classList.remove('drag-over');
-      
-      if (draggedElement && draggedElement !== pair) {
-        const allPairs = $$('.collection-pair');
-        const draggedIndex = allPairs.indexOf(draggedElement);
-        const targetIndex = allPairs.indexOf(pair);
-        
-        if (draggedIndex < targetIndex) {
-          pair.parentNode.insertBefore(draggedElement, pair.nextSibling);
-        } else {
-          pair.parentNode.insertBefore(draggedElement, pair);
-        }
-        
-        const order = $$('.collection-pair').map(p => p.getAttribute('data-collection'));
-        try {
-          await saveOrder(order);
-        } catch(err) {
-          console.error('保存顺序失败:', err);
-        }
-      }
-    });
+    pair.addEventListener('drop', (e) => handleDrop(pair, e));
   });
 };
 

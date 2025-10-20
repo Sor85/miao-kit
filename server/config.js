@@ -22,6 +22,7 @@ const config = {
   PUBLIC_DIR,
   UPLOAD_DIR,
   ORDER_FILE: path.join(UPLOAD_DIR, '.collections-order.json'),
+  RULES_FILE: path.join(ROOT_DIR, 'forward-rules.json'),
   MAX_LOGS: 1000,
   MAX_FILE_SIZE: 10 * 1024 * 1024,
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],

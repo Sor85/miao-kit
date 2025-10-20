@@ -101,12 +101,7 @@ const renderLogsPage = () => {
   logListEl.innerHTML = pageLogs.map(log => {
     const timestamp = formatTimestamp(log.timestamp);
     const statusClass = log.success ? 'success' : 'error';
-    let decodedPath = log.path;
-    try {
-      decodedPath = decodeURIComponent(log.path);
-    } catch(e) {
-      // 解码失败时使用原始路径
-    }
+    const decodedPath = safeDecodeURIComponent(log.path);
     const randomBadge = log.isRandom ? '<span class="random-badge" title="随机访问">随机</span>' : '';
     return `
       <div class="log-item ${statusClass}" data-id="${escapeHtml(log.id)}">
@@ -154,17 +149,19 @@ export const goToPage = (page) => {
 
 export const getCurrentPage = () => state.currentPage;
 
+const safeDecodeURIComponent = (str) => {
+  try {
+    return decodeURIComponent(str);
+  } catch {
+    return str;
+  }
+};
+
 const showLogDetail = async (logId) => {
   try {
     const log = await fetchLogById(logId);
     const logModalEl = $('#logModal');
-
-    let decodedPath = log.path;
-    try {
-      decodedPath = decodeURIComponent(log.path);
-    } catch(e) {
-      // 解码失败时使用原始路径
-    }
+    const decodedPath = safeDecodeURIComponent(log.path);
 
     $('#detailMethod').textContent = log.method;
     const pathElement = $('#detailPath');
@@ -200,7 +197,6 @@ const showLogDetail = async (logId) => {
     openModal(logModalEl, false);
   } catch(err) {
     console.error(err);
-    // Note: appAlert needs to be imported if used here
   }
 };
 
@@ -216,15 +212,7 @@ export const stopAutoRefresh = () => {
   }
 };
 
-const createCustomSelect = (selectElement) => {
-  if (selectElement.parentElement.classList.contains('custom-select-wrapper')) return;
-  
-  const wrapper = document.createElement('div');
-  wrapper.className = 'custom-select-wrapper';
-  
-  const selectedOption = selectElement.options[selectElement.selectedIndex];
-  const selectedText = selectedOption ? selectedOption.text : '';
-  
+const createTrigger = (selectedText) => {
   const trigger = document.createElement('div');
   trigger.className = 'custom-select-trigger';
   trigger.innerHTML = `
@@ -235,30 +223,47 @@ const createCustomSelect = (selectElement) => {
       </svg>
     </span>
   `;
+  return trigger;
+};
+
+const createOption = (option, index, selectElement, trigger, dropdown, wrapper) => {
+  const optionEl = document.createElement('div');
+  optionEl.className = 'custom-select-option';
+  if (index === selectElement.selectedIndex) optionEl.classList.add('selected');
+  optionEl.textContent = option.text;
+  optionEl.dataset.value = option.value;
+  optionEl.dataset.index = index;
   
+  optionEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectElement.selectedIndex = index;
+    selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+    trigger.querySelector('.custom-select-text').textContent = option.text;
+    dropdown.querySelectorAll('.custom-select-option').forEach(opt => 
+      opt.classList.remove('selected')
+    );
+    optionEl.classList.add('selected');
+    wrapper.classList.remove('active');
+  });
+  
+  return optionEl;
+};
+
+const createCustomSelect = (selectElement) => {
+  if (selectElement.parentElement.classList.contains('custom-select-wrapper')) return;
+  
+  const wrapper = document.createElement('div');
+  wrapper.className = 'custom-select-wrapper';
+  
+  const selectedOption = selectElement.options[selectElement.selectedIndex];
+  const selectedText = selectedOption ? selectedOption.text : '';
+  
+  const trigger = createTrigger(selectedText);
   const dropdown = document.createElement('div');
   dropdown.className = 'custom-select-dropdown';
   
   Array.from(selectElement.options).forEach((option, index) => {
-    const optionEl = document.createElement('div');
-    optionEl.className = 'custom-select-option';
-    if (index === selectElement.selectedIndex) optionEl.classList.add('selected');
-    optionEl.textContent = option.text;
-    optionEl.dataset.value = option.value;
-    optionEl.dataset.index = index;
-    
-    optionEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      selectElement.selectedIndex = index;
-      selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-      trigger.querySelector('.custom-select-text').textContent = option.text;
-      dropdown.querySelectorAll('.custom-select-option').forEach(opt => 
-        opt.classList.remove('selected')
-      );
-      optionEl.classList.add('selected');
-      wrapper.classList.remove('active');
-    });
-    
+    const optionEl = createOption(option, index, selectElement, trigger, dropdown, wrapper);
     dropdown.appendChild(optionEl);
   });
   
@@ -269,7 +274,7 @@ const createCustomSelect = (selectElement) => {
   
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    document.querySelectorAll('.custom-select-wrapper.active').forEach(w => {
+    $$('.custom-select-wrapper.active').forEach(w => {
       if (w !== wrapper) w.classList.remove('active');
     });
     wrapper.classList.toggle('active');

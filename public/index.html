@@ -3,18 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>简易图床 · 随机展示</title>
+  <title>妙妙小工具</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="icon" type="image/png" href="favicon.png">
+  <script>
+    // 在页面渲染前立即检查 hash，避免页面闪烁
+    (function() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'api-forward') {
+        document.documentElement.setAttribute('data-initial-tab', 'api-forward');
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="container">
     <header class="header">
-      <h1>简易图床 <span class="version-badge">ver.0.1.3</span></h1>
-      <p>上传图片到图床，访问随机 URL 获取任意一张</p>
+      <h1>妙妙工具箱 <span class="version-badge">ver.0.1.4</span></h1>
+      <p>适用于 bot 的妙妙工具箱，支持 API 转发和简易图床</p>
     </header>
 
+    <!-- Tab 导航 -->
+    <nav class="tab-nav">
+      <button class="tab-btn" data-tab="image-bed">
+        <span class="tab-icon"></span>
+        简易图床
+      </button>
+      <button class="tab-btn" data-tab="api-forward">
+        <span class="tab-icon"></span>
+        API转发
+      </button>
+    </nav>
+
     <main class="main-card">
+      <!-- 图床页面内容 -->
+      <div class="tab-content" data-content="image-bed">
       <section class="config-section">
         <div class="config-header">
           <h2>上传图片</h2>
@@ -124,6 +147,181 @@
         </div>
         </div><!-- 结束 log-main-card -->
       </section>
+      </div><!-- 结束 image-bed tab-content -->
+
+      <!-- API转发页面内容 -->
+      <div class="tab-content" data-content="api-forward">
+        <section class="forward-config-section">
+          <div class="config-header">
+            <h2>API转发配置</h2>
+            <button class="btn btn-primary btn-sm" id="btnAddForward">添加转发规则</button>
+          </div>
+          <p class="muted">配置API转发规则，支持HTTP 302重定向和服务器端代理两种模式。</p>
+          
+          <!-- 转发规则表单 -->
+          <div id="forwardFormCard" class="forward-form-card" style="display: none;">
+            <div class="form-header">
+              <h3>新增转发规则</h3>
+              <button class="icon-close-btn" id="btnCloseForm">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            
+            <form id="forwardForm" class="forward-form">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label for="forwardName">名称 <span class="optional"></span></label>
+                  <input type="text" id="forwardName" placeholder="" />
+                </div>
+                
+                <div class="input-group">
+                  <label for="forwardMode">转发模式</label>
+                  <select id="forwardMode" required>
+                    <option value="redirect">HTTP 302 重定向</option>
+                    <option value="proxy">服务器端代理 (Proxy)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="input-group">
+                  <label for="forwardEndpoint">API端点</label>
+                  <input type="text" id="forwardEndpoint" placeholder="路径名" required />
+                  <small class="input-hint">最终的访问地址为：http://IP:端口/api/端点</small>
+                </div>
+                
+                <div class="input-group">
+                  <label for="forwardTarget">目标服务器</label>
+                  <input type="text" id="forwardTarget" placeholder="https://api.example.com/data" required />
+                  <small class="input-hint"></small>
+                </div>
+              </div>
+
+              <div class="btn-group">
+                <button type="submit" class="btn btn-primary">保存规则</button>
+                <button type="button" class="btn" id="btnCancelForm">取消</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 转发规则列表 -->
+          <div id="forwardRulesContainer" class="forward-rules-container"></div>
+          
+          <div id="emptyForwardState" class="empty-state">
+            <p>暂无转发规则，点击"添加转发规则"创建第一个规则。</p>
+          </div>
+        </section>
+
+        <!-- 转发日志区域 -->
+        <section class="test-section">
+          <div class="log-main-card">
+            <div class="log-main-header">
+              <div>
+                <h2>转发日志</h2>
+                <p class="muted">显示最近的 API 转发记录，点击查看详情。</p>
+              </div>
+            </div>
+
+            <!-- 统计与筛选卡片 -->
+            <div class="log-control-card">
+              <div class="log-control-header">
+                <h3>转发统计</h3>
+                <button class="icon-refresh-btn" id="refreshForwardLogs" title="刷新日志">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- 统计信息 -->
+              <div class="log-stats">
+                <div class="stat-card">
+                  <div class="stat-label">全部</div>
+                  <div class="stat-value" id="fwdStatTotal">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">成功</div>
+                  <div class="stat-value stat-success" id="fwdStatSuccess">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">失败</div>
+                  <div class="stat-value stat-error" id="fwdStatError">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">重定向</div>
+                  <div class="stat-value" id="fwdStatRedirect">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">代理</div>
+                  <div class="stat-value" id="fwdStatProxy">0</div>
+                </div>
+              </div>
+
+              <!-- 筛选器 -->
+              <div class="grid-4 log-filters">
+                <div class="input-group">
+                  <label for="fwdFilterMethod">请求类型</label>
+                  <select id="fwdFilterMethod">
+                    <option value="all">全部</option>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="fwdFilterStatus">请求状态</label>
+                  <select id="fwdFilterStatus">
+                    <option value="all">全部</option>
+                    <option value="success">成功</option>
+                    <option value="error">失败</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="fwdFilterMode">转发模式</label>
+                  <select id="fwdFilterMode">
+                    <option value="all">全部</option>
+                    <option value="redirect">重定向</option>
+                    <option value="proxy">代理</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="fwdFilterTimeRange">时间范围</label>
+                  <select id="fwdFilterTimeRange">
+                    <option value="24">最近24小时</option>
+                    <option value="168">最近7天</option>
+                    <option value="720">最近30天</option>
+                    <option value="all">全部时间</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 日志列表 -->
+            <div id="forwardLogList" class="log-list"></div>
+            
+            <!-- 分页器 -->
+            <div class="pagination" id="forwardPagination" style="display:none;">
+              <button class="pagination-btn" id="fwdPrevPage" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+              <div class="pagination-info">
+                <span id="fwdPageInfo">第 1 页 / 共 1 页</span>
+              </div>
+              <button class="pagination-btn" id="fwdNextPage" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div><!-- 结束 api-forward tab-content -->
     </main>
   </div>
 
@@ -185,6 +383,91 @@
         <div class="detail-section" id="bodySection" style="display:none;">
           <h3>请求体</h3>
           <pre class="detail-code" id="detailBody"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 转发日志详情模态框 -->
+  <div id="forwardLogModal" class="modal">
+    <div class="modal-content log-modal">
+      <div class="modal-header">
+        <h2>转发详情</h2>
+        <span class="close" id="closeForwardLogModal">&times;</span>
+      </div>
+      <div class="log-detail-body">
+        <div class="detail-section">
+          <h3>转发信息</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">规则名称</span>
+              <span class="detail-value" id="fwdDetailRuleName"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">转发模式</span>
+              <span class="detail-value" id="fwdDetailMode"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">源路径</span>
+              <span class="detail-value" id="fwdDetailSource"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">目标URL</span>
+              <span class="detail-value" id="fwdDetailTarget"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>请求信息</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">请求方法</span>
+              <span class="detail-value" id="fwdDetailMethod"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">状态码</span>
+              <span class="detail-value" id="fwdDetailStatus"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">耗时</span>
+              <span class="detail-value" id="fwdDetailDuration"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">响应大小</span>
+              <span class="detail-value" id="fwdDetailSize"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">时间戳</span>
+              <span class="detail-value" id="fwdDetailTimestamp"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">IP 地址</span>
+              <span class="detail-value" id="fwdDetailIP"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>User Agent</h3>
+          <div class="detail-item">
+            <span class="detail-value detail-ua" id="fwdDetailUA"></span>
+          </div>
+        </div>
+
+        <div class="detail-section" id="fwdQuerySection" style="display:none;">
+          <h3>查询参数</h3>
+          <pre class="detail-code" id="fwdDetailQuery"></pre>
+        </div>
+
+        <div class="detail-section" id="fwdBodySection" style="display:none;">
+          <h3>请求体</h3>
+          <pre class="detail-code" id="fwdDetailBody"></pre>
+        </div>
+
+        <div class="detail-section" id="fwdErrorSection" style="display:none;">
+          <h3>错误信息</h3>
+          <pre class="detail-code error-message" id="fwdDetailError"></pre>
         </div>
       </div>
     </div>

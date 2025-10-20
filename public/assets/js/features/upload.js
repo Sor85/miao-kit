@@ -102,42 +102,35 @@ export const bindUploadEvents = (uploadHandler) => {
     const collectionName = card.getAttribute('data-collection');
     const dropzone = card.querySelector('.upload-dropzone');
     
+    const isCardDrag = (e) => e.dataTransfer.types.includes('application/x-collection-card');
+    const toggleDragover = (add) => {
+      card.classList.toggle('dragover', add);
+      if (dropzone) dropzone.classList.toggle('dragover', add);
+    };
+    
     card.addEventListener('dragover', (e) => {
-      // 检查是否是卡片拖拽，如果是则不处理
-      if (e.dataTransfer.types.includes('application/x-collection-card')) {
-        return;
-      }
-      
+      if (isCardDrag(e)) return;
       e.preventDefault();
       e.stopPropagation();
-      card.classList.add('dragover');
-      if (dropzone) dropzone.classList.add('dragover');
+      toggleDragover(true);
     });
     
     card.addEventListener('dragleave', (e) => {
-      // 检查是否是卡片拖拽
-      if (e.dataTransfer.types.includes('application/x-collection-card')) {
-        return;
-      }
-      
+      if (isCardDrag(e)) return;
       if (e.target === card || !card.contains(e.relatedTarget)) {
-        card.classList.remove('dragover');
-        if (dropzone) dropzone.classList.remove('dragover');
+        toggleDragover(false);
       }
     });
     
     card.addEventListener('drop', async (e) => {
-      // 检查是否是卡片拖拽，如果是则不处理上传
-      if (e.dataTransfer.types.includes('application/x-collection-card')) {
-        card.classList.remove('dragover');
-        if (dropzone) dropzone.classList.remove('dragover');
+      if (isCardDrag(e)) {
+        toggleDragover(false);
         return;
       }
       
       e.preventDefault();
       e.stopPropagation();
-      card.classList.remove('dragover');
-      if (dropzone) dropzone.classList.remove('dragover');
+      toggleDragover(false);
       
       const allFiles = Array.from(e.dataTransfer.files);
       const files = filterImageFiles(allFiles);

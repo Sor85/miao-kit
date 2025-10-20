@@ -39,10 +39,22 @@ app.use('/api/images', require('./server/routes/api-images').createRouter({
 
 app.use('/api/logs', require('./server/routes/api-logs').createRouter());
 
+app.use('/api/forward/logs', require('./server/routes/api-forward-logs').createRouter());
+
+app.use('/api/forward', require('./server/routes/api-forward').createRouter({
+  rulesFile: config.RULES_FILE
+}));
+
 app.use('/upload', require('./server/routes/upload').createRouter({ uploader }));
 
 // 静态资源
 app.use(express.static(config.PUBLIC_DIR, { maxAge: '1h', extensions: ['html'] }));
+
+// 转发路由（需要在静态资源之后，图片路由之前）
+app.use('/', require('./server/routes/forward').createRouter({
+  rulesFile: config.RULES_FILE,
+  maxLogs: config.MAX_LOGS
+}));
 
 // 图床路由
 app.use('/collections', require('./server/routes/collections').createRouter({

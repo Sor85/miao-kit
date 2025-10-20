@@ -31,7 +31,8 @@ const createRouter = ({ uploadDir, orderFile }) => {
       ensureDir(collectionDir);
       
       const order = loadOrder(orderFile);
-      if (!order.includes(collection)) {
+      const isNewCollection = !order.includes(collection);
+      if (isNewCollection) {
         order.push(collection);
         saveOrder(orderFile, order);
       }
@@ -107,7 +108,7 @@ const createRouter = ({ uploadDir, orderFile }) => {
   });
 
   // 保存图床顺序
-  router.post('-order', (req, res) => {
+  router.post('/-order', (req, res) => {
     const { order } = req.body;
     
     if (!Array.isArray(order)) {
