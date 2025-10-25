@@ -19,7 +19,7 @@ const createRouter = ({ uploader }) => {
     
     const files = (req.files || []).map(f => ({
       filename: path.basename(f.filename),
-      url: `/${collectionName}/${path.basename(f.filename)}`
+      url: `/${encodeURIComponent(collectionName)}/${encodeURIComponent(path.basename(f.filename))}`
     }));
     
     res.json({ 

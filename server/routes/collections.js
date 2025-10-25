@@ -35,7 +35,7 @@ const createRouter = ({ uploadDir, orderFile, imageExtensions }) => {
     res.json({
       collection: req.params.collection,
       images,
-      urls: images.map(n => `/${req.params.collection}/${n}`)
+      urls: images.map(n => `/${encodeURIComponent(req.params.collection)}/${encodeURIComponent(n)}`)
     });
   });
 

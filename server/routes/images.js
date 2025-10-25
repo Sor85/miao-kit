@@ -55,7 +55,7 @@ const createRouter = ({ uploadDir, imageExtensions, maxLogs }) => {
     }
     
     const randomImage = images[Math.floor(Math.random() * images.length)];
-    res.redirect(`/${collection}/${randomImage}?random=1`);
+    res.redirect(`/${encodeURIComponent(collection)}/${encodeURIComponent(randomImage)}?random=1`);
   });
 
   return router;
