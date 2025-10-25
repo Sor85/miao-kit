@@ -38,10 +38,8 @@ import {
 
 // Tab切换逻辑
 const switchTab = (tabName) => {
-  // 标记已切换，禁用初始状态 CSS 规则
-  if (document.documentElement.hasAttribute('data-initial-tab')) {
-    document.documentElement.setAttribute('data-switched', 'true');
-  }
+  // 标记已切换，禁用初始状态 CSS 规则（最佳实践：无条件设置，确保所有切换都正确）
+  document.documentElement.setAttribute('data-switched', 'true');
   
   // 更新Tab按钮状态
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -151,6 +149,9 @@ const app = {
     
     // 如果已经通过 CSS 预设了初始 tab，直接激活对应功能
     if (initialTab) {
+      // 标记已切换，禁用初始状态 CSS 规则（最佳实践：与 switchTab 保持一致）
+      document.documentElement.setAttribute('data-switched', 'true');
+      
       // 添加 .active 类，让后续切换正常工作
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === initialTab);
@@ -169,7 +170,8 @@ const app = {
       // 没有预设时，使用传统方式切换
       switchTab(hash);
     } else {
-      // 默认显示简易图床，添加 active 类
+      // 默认显示简易图床（最佳实践：确保所有初始化路径都禁用 CSS 初始状态规则）
+      document.documentElement.setAttribute('data-switched', 'true');
       document.querySelector('.tab-btn[data-tab="image-bed"]')?.classList.add('active');
       document.querySelector('.tab-content[data-content="image-bed"]')?.classList.add('active');
     }

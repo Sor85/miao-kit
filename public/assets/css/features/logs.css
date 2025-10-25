@@ -1,0 +1,321 @@
+/* 日志统计卡片网格 */
+.log-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* 转发日志统计为5列 */
+.tab-content[data-content="api-forward"] .log-stats {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+@media (max-width: 900px) {
+  .log-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 日志筛选器 */
+.log-filters {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* 覆盖：确保日志筛选器样式生效 */
+.log-filters .input-group select {
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2393c5fd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E") right 12px center / 16px 16px no-repeat,
+    linear-gradient(to bottom, #ffffff 0%, #f8fbff 50%, #f0f7ff 100%);
+  border-color: #e0e7eb;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  padding-right: 40px;
+}
+
+.log-filters .input-group select:hover {
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E") right 12px center / 16px 16px no-repeat,
+    linear-gradient(to bottom, #ffffff 0%, #f0f9ff 50%, #e6f3ff 100%);
+  border-color: #cbd5e1;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.log-filters .input-group select:focus {
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231e90ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E") right 12px center / 16px 16px no-repeat,
+    linear-gradient(to bottom, #ffffff 0%, #f8fbff 50%, #f0f7ff 100%);
+  border-color: #1e90ff;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 0 0 3px rgba(30, 144, 255, 0.15);
+}
+
+/* 日志筛选器的自定义select特殊样式 */
+.log-filters .custom-select-trigger {
+  background: linear-gradient(to bottom, #ffffff 0%, #f8fbff 50%, #f0f7ff 100%);
+  border-color: #e0e7eb;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.log-filters .custom-select-trigger:hover {
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f9ff 50%, #e6f3ff 100%);
+  border-color: #cbd5e1;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.log-filters .custom-select-wrapper.active .custom-select-trigger {
+  background: linear-gradient(to bottom, #ffffff 0%, #f8fbff 50%, #f0f7ff 100%);
+  border-color: #1e90ff;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 0 0 3px rgba(30, 144, 255, 0.15);
+}
+
+.log-filters .custom-select-arrow svg {
+  fill: #93c5fd;
+}
+
+.log-filters .custom-select-wrapper.active .custom-select-arrow svg {
+  fill: #1e90ff;
+}
+
+/* 日志列表 */
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* 日志项 */
+.log-item {
+  background: #ffffff;
+  border: 1px solid #d4e7ff;
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all .2s ease;
+  display: grid;
+  grid-template-columns: 140px 70px minmax(0, 1fr) 70px 70px;
+  gap: 12px;
+  align-items: center;
+  min-height: 50px;
+  box-shadow: 
+    0 1px 3px rgba(30, 144, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 900px) {
+  .log-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .log-item > * {
+    text-align: left !important;
+    min-width: 0;
+  }
+}
+
+.log-item:hover {
+  background: #fafcff;
+  box-shadow: 
+    0 4px 12px rgba(30, 144, 255, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  border-color: #b8d9ff;
+  transform: translateY(-1px);
+}
+
+.log-item.error {
+  border-left: 3px solid #ef4444;
+}
+
+.log-item.success {
+  border-left: 3px solid #22c55e;
+}
+
+/* 日志时间戳 */
+.log-timestamp {
+  font-size: 13px;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* 日志请求方法 */
+.log-method {
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  text-align: center;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.log-method.GET {
+  background: #e7f2ff;
+  color: #1e90ff;
+}
+
+.log-method.POST {
+  background: #dcfce7;
+  color: #22c55e;
+}
+
+.log-method.PUT {
+  background: #fef3c7;
+  color: #f59e0b;
+}
+
+.log-method.DELETE {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* 日志路径 */
+.log-path {
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 随机标识徽章 */
+.random-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.1);
+  border: 1px solid rgba(30, 144, 255, 0.3);
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 模式徽章 */
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mode-badge.redirect {
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.1);
+  border: 1px solid rgba(30, 144, 255, 0.3);
+}
+
+.mode-badge.proxy {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* 日志状态 */
+.log-status {
+  font-weight: 700;
+  font-size: 15px;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.log-status.success {
+  color: #22c55e;
+}
+
+.log-status.error {
+  color: #ef4444;
+}
+
+/* 日志耗时 */
+.log-duration {
+  font-size: 14px;
+  color: #64748b;
+  text-align: right;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* 分页器 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px 0;
+}
+
+.pagination-btn {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #1e90ff;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #e7f2ff;
+  border-color: #1e90ff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #334155;
+  font-weight: 500;
+  min-width: 120px;
+  text-align: center;
+}
+

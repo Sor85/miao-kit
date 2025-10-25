@@ -1,0 +1,49 @@
+/* 全局重置和基础样式 */
+* { box-sizing: border-box; }
+html, body { height: 100%; overflow-x: hidden; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(135deg, #d9edff 0%, #f0f7ff 50%, #fafbff 100%);
+  color: #1f2937;
+}
+
+/* CSS 变量定义 */
+:root{
+  --sb-track: #eef6ff;
+  --sb-thumb: #cfe6ff;
+  --sb-thumb-hover: #9cc8ff;
+}
+
+/* 自定义滚动条 - Firefox */
+* { scrollbar-color: var(--sb-thumb) var(--sb-track); scrollbar-width: thin; }
+
+/* 自定义滚动条 - WebKit (Chromium/Edge/Safari) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: var(--sb-track); border-radius: 8px; }
+*::-webkit-scrollbar-thumb { background-color: var(--sb-thumb); border-radius: 8px; border: 2px solid var(--sb-track); }
+*::-webkit-scrollbar-thumb:hover { background-color: var(--sb-thumb-hover); }
+*::-webkit-scrollbar-corner { background: transparent; }
+
+/* 容器布局 */
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* 页面标题 */
+.header { text-align: left; color: #0f172a; margin-bottom: 24px; }
+.header h1 { font-size: 32px; margin: 8px 0; line-height: 1.2; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.header p { color: #475569; line-height: 1.5; margin: 8px 0; }
+.header .subnote { color: #6b7280; font-size: 12px; margin-top: 4px; line-height: 1.4; }
+
+/* 版本号徽章 */
+.version-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.15);
+}
+

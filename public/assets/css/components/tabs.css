@@ -1,0 +1,117 @@
+/* Tab 导航系统 */
+.tab-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.08);
+}
+
+/* Tab 按钮 */
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #e7f2ff 0%, #f0f9ff 100%);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.tab-btn:hover::before {
+  opacity: 0.5;
+}
+
+/* Tab 激活状态 */
+.tab-btn.active,
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-btn[data-tab="api-forward"],
+html:not([data-initial-tab]):not([data-switched]) .tab-btn[data-tab="image-bed"] {
+  background: linear-gradient(135deg, #1e90ff 0%, #3b9fff 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 4px 12px rgba(30, 144, 255, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.tab-btn.active::before,
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-btn[data-tab="api-forward"]::before,
+html:not([data-initial-tab]):not([data-switched]) .tab-btn[data-tab="image-bed"]::before {
+  opacity: 0;
+}
+
+/* 确保非 active 的 tab 不会错误应用样式 */
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-btn[data-tab="image-bed"] {
+  background: transparent;
+  color: #64748b;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Tab 图标指示器 */
+.tab-icon {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn.active .tab-icon,
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-btn[data-tab="api-forward"] .tab-icon,
+html:not([data-initial-tab]):not([data-switched]) .tab-btn[data-tab="image-bed"] .tab-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Tab 内容区域 */
+.tab-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: tabFadeIn .4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.tab-content.active,
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-content[data-content="api-forward"],
+html:not([data-initial-tab]):not([data-switched]) .tab-content[data-content="image-bed"] {
+  display: block;
+}
+
+/* 确保非 active 的内容不显示 */
+html[data-initial-tab="api-forward"]:not([data-switched]) .tab-content[data-content="image-bed"] {
+  display: none;
+}
+
+/* Tab 切换动画 */
+@keyframes tabFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

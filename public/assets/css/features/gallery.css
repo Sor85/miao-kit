@@ -1,0 +1,292 @@
+/* 图片画廊模态框 */
+.gallery-modal {
+  max-width: 1000px;
+}
+
+.gallery-body {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* 图片画廊标题包装器 */
+.gallery-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 图片画廊操作按钮区域 */
+.gallery-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 
+ * 图片数量徽章样式
+ * 注意：以下样式经过精心调整以确保圆点和数字完美居中对齐
+ * 请勿随意修改以下属性，特别是：
+ * - height: 28px (固定高度确保垂直居中)
+ * - line-height: 1 (文字行高)
+ * - transform: translateY(-0.5px) (微调垂直位置，补偿字体基线偏移)
+ * - font-size: 15px (字体大小与圆点视觉平衡)
+ */
+.gallery-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #e7f2ff 0%, #f0f9ff 100%);
+  color: #1e90ff;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid #cfe6ff;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(30, 144, 255, 0.08);
+  font-variant-numeric: tabular-nums;
+  height: 28px;
+  transform: translateY(-0.5px);
+}
+
+/* 
+ * 徽章装饰圆点
+ * 注意：display: block 确保在 flex 容器中正确居中
+ * 尺寸 6x6px 与 15px 字体形成良好的视觉比例
+ */
+.gallery-count-badge::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: #1e90ff;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* 批量选择按钮 */
+.batch-select-label {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid #cfe6ff;
+  background: #e7f2ff;
+  color: #0f172a;
+  transition: all .2s ease;
+  user-select: none;
+}
+
+.batch-select-label:hover {
+  background: #d9ecff;
+  transform: translateY(-1px);
+}
+
+.batch-select-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.batch-select-label span {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* 批量删除按钮 */
+#batchDeleteBtn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* 画廊信息栏 */
+.gallery-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fbff;
+  border: 1px solid #e5f1ff;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.gallery-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.gallery-random {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e90ff;
+  text-decoration: none;
+  padding: 6px 12px;
+  background: #e7f2ff;
+  border-radius: 6px;
+  transition: all .2s ease;
+}
+
+.gallery-random:hover {
+  background: #cfe6ff;
+  transform: translateY(-1px);
+}
+
+/* 画廊网格布局 */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* 画廊图片项 */
+.gallery-item {
+  position: relative;
+  background: #f8fbff;
+  border: 1px solid #e5f1ff;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all .2s ease;
+  aspect-ratio: 1;
+}
+
+.gallery-item:hover {
+  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 图片项复选框 */
+.gallery-item-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+/* 悬停在图片上时显示复选框 */
+.gallery-item:hover .gallery-item-checkbox {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 已选中的复选框始终显示 */
+.gallery-item-checkbox:checked {
+  opacity: 1;
+  transform: scale(1);
+  background: #1e90ff;
+  border-color: #1e90ff;
+}
+
+.gallery-item-checkbox:hover {
+  background: #ffffff;
+  border-color: #1e90ff;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.2);
+}
+
+.gallery-item-checkbox:checked:hover {
+  background: #1e90ff;
+}
+
+.gallery-item-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 图片项信息栏 */
+.gallery-item-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  padding: 12px 8px 8px;
+  opacity: 0;
+  transition: opacity .2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.gallery-item:hover .gallery-item-info {
+  opacity: 1;
+}
+
+.gallery-item-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all .2s ease;
+}
+
+.gallery-item-link:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.gallery-item-delete {
+  background: rgba(239, 68, 68, 0.8);
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s ease;
+}
+
+.gallery-item-delete:hover {
+  background: rgba(239, 68, 68, 1);
+  transform: scale(1.05);
+}
+

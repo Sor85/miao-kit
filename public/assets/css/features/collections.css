@@ -1,0 +1,254 @@
+/* 图床集合容器 */
+.collections-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 32px;
+  column-gap: 20px;
+  margin-top: 16px;
+}
+
+@media (max-width: 1200px) {
+  .collections-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .collections-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 集合配对容器 */
+.collection-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  transition: all .3s ease;
+}
+
+/* 新卡片入场动画 */
+.collection-pair.collection-enter-initial {
+  opacity: 0;
+  transform: scale(0.95) translateY(15px);
+}
+
+.collection-pair.collection-enter {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 拖拽状态 */
+.collection-pair.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.collection-pair.drag-over {
+  border: 2px dashed #1e90ff;
+  border-radius: 12px;
+  padding: 4px;
+  margin: -4px -4px;
+  background: rgba(30, 144, 255, 0.05);
+}
+
+/* 拖拽手柄 */
+.drag-handle {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s ease, top 0.2s ease;
+  z-index: 10;
+  padding: 8px 12px;
+}
+
+.drag-handle svg {
+  color: rgba(30, 144, 255, 0.5);
+  transition: color 0.2s ease, transform 0.2s ease;
+  filter: drop-shadow(0 1px 2px rgba(30, 144, 255, 0.15));
+}
+
+.collection-pair:hover .drag-handle {
+  opacity: 1;
+  top: 8px;
+}
+
+.drag-handle:hover svg {
+  color: #1e90ff;
+  filter: drop-shadow(0 2px 4px rgba(30, 144, 255, 0.3));
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle:active svg {
+  transform: scale(0.95);
+}
+
+/* 上传集合卡片 */
+.upload-collection-card {
+  background: #ffffff;
+  border: 2px dashed #d4e7ff;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all .2s ease;
+}
+
+.upload-collection-card.dragover {
+  border-color: #1e90ff;
+  background: rgba(30, 144, 255, 0.05);
+  box-shadow: 0 4px 16px rgba(30, 144, 255, 0.2);
+}
+
+.upload-collection-card:hover {
+  border-color: #b8d9ff;
+  box-shadow: 
+    0 6px 16px rgba(30, 144, 255, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* 上传卡片头部 */
+.upload-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.upload-collection-name {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.upload-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-collection-count {
+  font-size: 14px;
+  color: #0369a1;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(30, 144, 255, 0.1);
+}
+
+/* 上传拖放区 */
+.upload-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fafcff 100%);
+  border: 2px dashed #b8d9ff;
+  border-radius: 8px;
+  gap: 8px;
+  max-height: 300px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 3px rgba(30, 144, 255, 0.08);
+}
+
+.upload-collection-card.collapsed .upload-dropzone {
+  max-height: 0;
+  padding: 0 16px;
+  margin: 0;
+  border-width: 0;
+  opacity: 0;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-collection-card.collapsed .upload-card-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-collection-card.collapsed .toggle-upload-btn svg {
+  transform: rotate(-90deg);
+}
+
+.upload-dropzone svg {
+  color: #93c5fd;
+  margin-bottom: 8px;
+}
+
+.upload-dropzone p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.upload-dropzone span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.upload-dropzone:hover {
+  background: linear-gradient(135deg, #e6f2ff 0%, #f0f7ff 100%);
+  border-color: #5eb0ff;
+  box-shadow: inset 0 1px 3px rgba(30, 144, 255, 0.12);
+}
+
+.upload-dropzone.dragover {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border-color: #1e90ff;
+  border-style: solid;
+  box-shadow: 
+    inset 0 0 20px rgba(30, 144, 255, 0.15),
+    0 0 0 3px rgba(30, 144, 255, 0.1);
+}
+
+.upload-dropzone.dragover svg {
+  color: #1e90ff;
+  transform: scale(1.1);
+}
+
+/* 上传结果显示 */
+.upload-result { 
+  background: #f8fbff; 
+  border: 1px solid #e5f1ff; 
+  border-radius: 8px; 
+  padding: 12px; 
+  margin-top: 12px;
+  font-family: ui-monospace, monospace; 
+  font-size: 13px; 
+  line-height: 1.6; 
+  color: #0b2542;
+  white-space: pre-wrap;
+  word-break: break-all;
+  display: none;
+}
+
+.upload-result:not(:empty) { 
+  display: block; 
+}
+

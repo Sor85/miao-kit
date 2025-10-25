@@ -1,0 +1,184 @@
+/* 按钮基础样式 */
+.btn { 
+  padding: 10px 16px; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  background: #f1f5f9; 
+  color: #0f172a; 
+  font-weight: 600; 
+  font-size: 15px;
+  transition: all .2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btn:hover { 
+  background: #e2e8f0; 
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* 主要按钮 */
+.btn-primary { 
+  background: linear-gradient(135deg, #1e90ff 0%, #3b9fff 100%);
+  color: #fff; 
+  box-shadow: 
+    0 2px 6px rgba(30, 144, 255, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover { 
+  background: linear-gradient(135deg, #1778d6 0%, #1e90ff 100%);
+  box-shadow: 
+    0 4px 12px rgba(30, 144, 255, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 次要按钮 */
+.btn-secondary { 
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  color: #0369a1; 
+  border: 1px solid #b8d9ff;
+  box-shadow: 0 1px 3px rgba(30, 144, 255, 0.1);
+}
+
+.btn-secondary:hover { 
+  background: linear-gradient(135deg, #d0ebff 0%, #e0f2fe 100%);
+  border-color: #93c5fd;
+  box-shadow: 0 2px 6px rgba(30, 144, 255, 0.2);
+}
+
+/* 小尺寸按钮 */
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* 图标按钮 - 编辑 */
+.icon-edit-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-edit-btn:hover {
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.08);
+}
+
+/* 图标按钮 - 删除 */
+.icon-delete-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-delete-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* 图标按钮 - 打开 */
+.icon-open-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-open-btn:hover {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* 图标按钮 - 刷新 */
+.icon-refresh-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #1e90ff;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-refresh-btn:hover {
+  color: #1778d6;
+  background: rgba(30, 144, 255, 0.08);
+  transform: rotate(90deg);
+}
+
+.icon-refresh-btn:active {
+  transform: rotate(180deg);
+  color: #0369a1;
+}
+
+.icon-refresh-btn svg {
+  display: block;
+}
+
+/* 图标按钮 - 关闭 */
+.icon-close-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.icon-close-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* 切换按钮 */
+.toggle-upload-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.toggle-upload-btn:hover {
+  color: #1e90ff;
+  background: rgba(30, 144, 255, 0.08);
+}
+
+.toggle-upload-btn svg {
+  transition: transform .2s ease;
+}
+

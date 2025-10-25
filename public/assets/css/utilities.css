@@ -1,0 +1,95 @@
+/* 布局工具类 */
+
+/* 网格布局 - 2列 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 网格布局 - 3列 */
+.grid-3 { 
+  display: grid; 
+  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  gap: 20px; 
+}
+
+@media (max-width: 900px) { 
+  .grid-3 { 
+    grid-template-columns: 1fr; 
+  } 
+}
+
+/* 网格布局 - 4列 */
+.grid-4 { 
+  display: grid; 
+  grid-template-columns: repeat(4, minmax(0, 1fr)); 
+  gap: 16px; 
+}
+
+@media (max-width: 900px) { 
+  .grid-4 { 
+    grid-template-columns: repeat(2, 1fr); 
+  } 
+}
+
+@media (max-width: 600px) { 
+  .grid-4 { 
+    grid-template-columns: 1fr; 
+  } 
+}
+
+/* 文本工具类 */
+.muted { 
+  color: #64748b; 
+  margin: 6px 0 18px; 
+  font-size: 14px; 
+}
+
+.optional {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.input-hint {
+  display: block;
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* 布局间距 */
+.input-row { 
+  margin-top: 16px; 
+}
+
+.config-section { 
+  margin-bottom: 36px; 
+}
+
+.test-section { 
+  margin-top: 36px; 
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: left;
+  color: #64748b;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+/* 按钮组 */
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
